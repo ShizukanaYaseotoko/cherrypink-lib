@@ -1,12 +1,12 @@
 #pragma once
 
-#include <cstdint>
-
+#define STB_IMAGE_IMPLEMENTATION
 #include "assets/resource_manager.hpp"
 #include "event/event.hpp"
 #include "rendering/renderer.hpp"
 #include "rendering/window.hpp"
 #include "scene/scene.hpp"
+#include <cstdint>
 
 struct GLFWwindow;
 

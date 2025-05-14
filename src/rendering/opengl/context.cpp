@@ -10,55 +10,62 @@
 
 namespace cherrypink {
 
-        bool OpenGLContext::Init() {
-            glfwMakeContextCurrent(m_window->Handle());
-            if (!gladLoadGL()) {
-                spdlog::critical("Failed to initialize OpenGL");
-                return false;
-            }
-            return true;
+    bool OpenGLContext::Init() {
+        glfwMakeContextCurrent(m_window->Handle());
+        if (!gladLoadGL()) {
+            spdlog::critical("Failed to initialize OpenGL");
+            return false;
         }
+        return true;
+    }
 
-        void OpenGLContext::Clear() {
-            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-        }
+    void OpenGLContext::Clear() {
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    }
 
-        void OpenGLContext::SwapBuffers() {
-            glfwSwapBuffers(m_window->Handle());
-        }
+    void OpenGLContext::SwapBuffers() { glfwSwapBuffers(m_window->Handle()); }
 
-        Mesh OpenGLContext::CreateMesh(const std::vector<float> &vertices, const std::vector<unsigned int> &indices) {
-            unsigned int vao = 0, vbo = 0, ebo = 0;
-            glGenVertexArrays(1, &vao);
-            glBindVertexArray(vao);
+    Mesh OpenGLContext::CreateMesh(const std::vector<float> &vertices,
+            const std::vector<unsigned int> &indices) {
+        unsigned int vao = 0, vbo = 0, ebo = 0;
+        glGenVertexArrays(1, &vao);
+        glBindVertexArray(vao);
 
-            glGenBuffers(1, &vbo);
-            glBindBuffer(GL_ARRAY_BUFFER, vbo);
+        glGenBuffers(1, &vbo);
+        glBindBuffer(GL_ARRAY_BUFFER, vbo);
 
-            float *vertexArray = new float[vertices.size()];
-            std::copy(vertices.begin(), vertices.end(), vertexArray);
+        float *vertexArray = new float[vertices.size()];
+        std::copy(vertices.begin(), vertices.end(), vertexArray);
 
-            glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(float), vertexArray, GL_STATIC_DRAW);
+        glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(float), vertexArray,
+                GL_STATIC_DRAW);
 
-            glEnableVertexAttribArray(0);
-            glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), nullptr);
+        glEnableVertexAttribArray(0);
+        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), nullptr);
 
-            glGenBuffers(1, &ebo);
-            glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
+        glGenBuffers(1, &ebo);
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
 
-            unsigned int *indexArray = new unsigned int[indices.size()];
-            std::copy(indices.begin(), indices.end(), indexArray);
-            glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(unsigned int), indexArray, GL_STATIC_DRAW);
+        unsigned int *indexArray = new unsigned int[indices.size()];
+        std::copy(indices.begin(), indices.end(), indexArray);
+        glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(unsigned int),
+                indexArray, GL_STATIC_DRAW);
 
-            return Mesh(vao, vbo, vertices, indices);
-        }
+        return Mesh(vao, vbo, vertices, indices);
+    }
 
-        void OpenGLContext::DrawMesh(const Mesh &mesh) {
-            glDrawElements(GL_TRIANGLES, mesh.Indices(), GL_UNSIGNED_INT, nullptr);
-        }
+    OpenGLTexture *OpenGLContext::CreateTexture(TextureParameters parameters,
+            unsigned char *data) {
+        return new OpenGLTexture(parameters, data);
+    }
 
-        void OpenGLContext::SetViewport(unsigned int x, unsigned int y, unsigned int width, unsigned int height) {
-            glViewport(x, y, width, height);
-        }
+    void OpenGLContext::DrawMesh(const Mesh &mesh) {
+        glDrawElements(GL_TRIANGLES, mesh.Indices(), GL_UNSIGNED_INT, nullptr);
+    }
 
-}
+    void OpenGLContext::SetViewport(unsigned int x, unsigned int y,
+            unsigned int width, unsigned int height) {
+        glViewport(x, y, width, height);
+    }
+
+} // namespace cherrypink
